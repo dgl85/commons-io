@@ -51,16 +51,16 @@ public class FileReader {
      */
     public DataLine[] getLines(int firstIndex, int lastIndex) throws IOException {
         validateGet(firstIndex, lastIndex);
-        int bytesToRead = (lastIndex-firstIndex)*bytesPerLine;
+        long bytesToRead = (lastIndex-firstIndex)*bytesPerLine;
         if (bytesToRead > MAX_BUFFER_SIZE) {
             DataLine[] firstHalf = getLines(firstIndex, firstIndex+((lastIndex-firstIndex)/2));
             DataLine[] secondHalf = getLines(firstIndex+((lastIndex-firstIndex)/2), lastIndex);
             return Utils.mergeArrays(firstHalf, secondHalf);
         }
         if (multipleLinesBuffer == null || multipleLinesBuffer.capacity() < bytesToRead) {
-            multipleLinesBuffer = ByteBuffer.allocateDirect(bytesToRead);
+            multipleLinesBuffer = ByteBuffer.allocateDirect((int) bytesToRead);
         }
-        return getDataLines(readAndFlip(multipleLinesBuffer, bytesToRead, getLinePosition(firstIndex)));
+        return getDataLines(readAndFlip(multipleLinesBuffer, (int) bytesToRead, getLinePosition(firstIndex)));
     }
 
     public int getNumberOfLines() {

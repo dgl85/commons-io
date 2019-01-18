@@ -54,14 +54,15 @@ public class FileWriter {
         }
         ByteBuffer writeBuffer;
         if (dataLines.length > 1) {
-            int bytesToWrite = dataLines.length * bytesPerLine;
+            long bytesToWrite = dataLines.length * bytesPerLine;
             if (bytesToWrite > MAX_BUFFER_SIZE) {
                 DataLine[][] halfs = Utils.splitArrayInHalfs(dataLines);
                 writeLines(startLineIndex, halfs[0]);
                 writeLines(startLineIndex+halfs[0].length, halfs[1]);
+                return;
             }
             if (multipleLinesBuffer == null || multipleLinesBuffer.capacity() < bytesToWrite) {
-                multipleLinesBuffer = ByteBuffer.allocateDirect(bytesToWrite);
+                multipleLinesBuffer = ByteBuffer.allocateDirect((int) bytesToWrite);
             }
             writeBuffer = multipleLinesBuffer;
         } else {
