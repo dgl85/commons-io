@@ -1,6 +1,5 @@
-package org.dgl.commons.io.tabular.org.dgl.commons.io;
+package org.dgl.commons.io;
 
-import org.dgl.commons.io.PrimitiveBytes;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
