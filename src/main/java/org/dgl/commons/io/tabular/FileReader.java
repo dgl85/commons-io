@@ -16,9 +16,11 @@ public class FileReader {
     private final DataLineStructure lineStructure;
     private final FileChannel fileChannel;
     private final ByteBuffer lineBuffer;
+    private final String filePath;
     private ByteBuffer multipleLinesBuffer = null;
 
     public FileReader(String filePath) throws IOException {
+        this.filePath = filePath;
         fileChannel = new RandomAccessFile(filePath,"r").getChannel();
         lineStructure = getLineStructureFromFile();
         bytesPerLine = lineStructure.getSizeInBytes();
@@ -79,6 +81,10 @@ public class FileReader {
 
     public boolean isOpen() {
         return fileChannel.isOpen();
+    }
+
+    public String getFilePath() {
+        return filePath;
     }
 
     private DataLine[] getDataLines(ByteBuffer data) {
@@ -170,7 +176,7 @@ public class FileReader {
     }
 
     /**
-     * Buffer might be sliced so return buffer must be used always
+     * Buffer might be sliced, so returned buffer must be used, specially if bytesToRead != buffer.capacity()
      * @param buffer
      * @param bytesToRead
      * @param filePosition

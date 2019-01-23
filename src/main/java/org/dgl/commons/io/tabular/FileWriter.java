@@ -15,10 +15,12 @@ public class FileWriter {
     private final DataLineStructure lineStructure;
     private final ByteBuffer lineBuffer;
     private final FileChannel fileChannel;
+    private final String filePath;
     private ByteBuffer multipleLinesBuffer = null;
     private int currentLineIndex;
 
     public FileWriter(String filePath, DataLineStructure lineStructure) throws IOException {
+        this.filePath = filePath;
         this.lineStructure = lineStructure;
         bytesPerLine = lineStructure.getSizeInBytes();
         if (bytesPerLine > MAX_BUFFER_SIZE) {
@@ -84,6 +86,10 @@ public class FileWriter {
         try {
             fileChannel.close();
         } catch (IOException e){}
+    }
+
+    public String getFilePath() {
+        return filePath;
     }
 
     private long getLinePosition(int lineIndex) {
