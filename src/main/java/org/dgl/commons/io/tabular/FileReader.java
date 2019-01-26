@@ -19,7 +19,9 @@ public class FileReader {
     private final String filePath;
     private ByteBuffer multipleLinesBuffer = null;
 
-    public FileReader(String filePath) throws IOException {
+    public static final ByteOrder DEFAULT_ENDIANNESS = ByteOrder.BIG_ENDIAN;
+
+    public FileReader(String filePath, ByteOrder endianness) throws IOException {
         this.filePath = filePath;
         fileChannel = new RandomAccessFile(filePath,"r").getChannel();
         lineStructure = getLineStructureFromFile();
@@ -34,7 +36,11 @@ public class FileReader {
             throw new IOException();
         }
         numberOfLines = (int) (fileSize - headerLength) / bytesPerLine;
-        lineBuffer = ByteBuffer.allocateDirect(bytesPerLine).order(ByteOrder.BIG_ENDIAN);
+        lineBuffer = ByteBuffer.allocateDirect(bytesPerLine).order(endianness);
+    }
+
+    public FileReader(String filePath) throws IOException {
+        this(filePath, DEFAULT_ENDIANNESS);
     }
 
     public DataLine getLine(int lineIndex) throws IOException {

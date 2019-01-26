@@ -19,7 +19,9 @@ public class FileWriter {
     private final String filePath;
     private int currentLineIndex;
 
-    public FileWriter(String filePath, DataLineStructure lineStructure) throws IOException {
+    public static final ByteOrder DEFAULT_ENDIANNESS = ByteOrder.BIG_ENDIAN;
+
+    public FileWriter(String filePath, DataLineStructure lineStructure, ByteOrder endianness) throws IOException {
         this.filePath = filePath;
         this.lineStructure = lineStructure;
         bytesPerLine = lineStructure.getSizeInBytes();
@@ -34,8 +36,12 @@ public class FileWriter {
             fileChannel = new RandomAccessFile(filePath,"rw").getChannel();
             writeFileHeader();
         }
-        lineBuffer = ByteBuffer.allocateDirect(lineStructure.getSizeInBytes()).order(ByteOrder.BIG_ENDIAN);
+        lineBuffer = ByteBuffer.allocateDirect(lineStructure.getSizeInBytes()).order(endianness);
         currentLineIndex = (int)(fileChannel.size()-headerLength)/bytesPerLine;
+    }
+
+    public FileWriter(String filePath, DataLineStructure lineStructure) throws IOException {
+        this(filePath, lineStructure, DEFAULT_ENDIANNESS);
     }
 
     public void writeLine(DataLine dataLine) throws IOException {
