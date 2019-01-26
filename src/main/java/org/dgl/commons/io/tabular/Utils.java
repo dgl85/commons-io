@@ -106,10 +106,10 @@ public class Utils {
      * @param data
      * @return [firstHalf, secondHalf]
      */
-    public static DataLine[][] splitArrayInHalfs(DataLine[] data) {
-        DataLine[][] halfs = new DataLine[2][];
-        DataLine[] firstHalf = new DataLine[data.length/2];
-        DataLine[] secondHalf = new DataLine[data.length-firstHalf.length];
+    public static <T> T[][] splitArrayInHalfs(T[] data) {
+        T[][] halfs = (T[][]) new Object[2][];
+        T[] firstHalf = (T[]) new Object[data.length/2];
+        T[] secondHalf = (T[]) new Object[data.length-firstHalf.length];
         for (int i = 0; i < firstHalf.length; i++) {
             firstHalf[i] = data[i];
         }
