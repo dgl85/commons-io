@@ -10,13 +10,13 @@ import java.nio.channels.FileChannel;
 public class FileWriter {
 
     private final int MAX_BUFFER_SIZE = Integer.MAX_VALUE;
+    private ByteBuffer multipleLinesBuffer = null;
     private final int bytesPerLine;
     private final int headerLength;
     private final DataLineStructure lineStructure;
     private final ByteBuffer lineBuffer;
     private final FileChannel fileChannel;
     private final String filePath;
-    private ByteBuffer multipleLinesBuffer = null;
     private int currentLineIndex;
 
     public FileWriter(String filePath, DataLineStructure lineStructure) throws IOException {

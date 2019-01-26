@@ -20,7 +20,7 @@ public class DataLineStructure {
         }
     }
 
-    public void setElementType(int index, byte type) {
+    public DataLineStructure setElementType(int index, byte type) {
         if (type < 1 || type > 7) {
             throw new IllegalArgumentException();
         }
@@ -30,6 +30,7 @@ public class DataLineStructure {
         }
         sizeInBytes += PrimitiveType.getLengthInBytesForType(type)-oldTypeSize;
         elementTypes[index] = type;
+        return this;
     }
 
     /**
@@ -37,14 +38,16 @@ public class DataLineStructure {
      * @param endIndex exclusive
      * @param type
      */
-    public void setRangeType(int startIndex, int endIndex, byte type) {
+    public DataLineStructure setRangeType(int startIndex, int endIndex, byte type) {
         for (int i = startIndex; i < endIndex; i++) {
             setElementType(i,type);
         }
+        return this;
     }
 
-    public void setAllType(byte type) {
+    public DataLineStructure setAllType(byte type) {
         setRangeType(0,getNumberOfElements(),type);
+        return this;
     }
 
     public int getNumberOfElements() {

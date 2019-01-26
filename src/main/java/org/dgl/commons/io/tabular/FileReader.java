@@ -39,8 +39,12 @@ public class FileReader {
 
     public DataLine getLine(int lineIndex) throws IOException {
         validateGet(lineIndex);
-        readAndFlip(lineBuffer, getLinePosition(lineIndex));
-        return getDataLines(lineBuffer)[0];
+        return getDataLines(readAndFlip(lineBuffer, getLinePosition(lineIndex)))[0];
+    }
+
+    public byte[] getLineBytes(int lineIndex) throws IOException {
+        validateGet(lineIndex);
+        return readAndFlip(lineBuffer, getLinePosition(lineIndex)).array();
     }
 
     /**
@@ -63,6 +67,28 @@ public class FileReader {
             multipleLinesBuffer = ByteBuffer.allocateDirect((int) bytesToRead);
         }
         return getDataLines(readAndFlip(multipleLinesBuffer, (int) bytesToRead, getLinePosition(firstIndex)));
+    }
+
+    /**
+     * Buffer allocation overhead must be taken into account when calling this method
+     *
+     * @param firstIndex inclusive
+     * @param lastIndex exclusive
+     * @return
+     * @throws IOException
+     */
+    public byte[] getLinesBytes(int firstIndex, int lastIndex) throws IOException {
+        validateGet(firstIndex, lastIndex);
+        long bytesToRead = (lastIndex-firstIndex)*bytesPerLine;
+        if (bytesToRead > MAX_BUFFER_SIZE) {
+            byte[] firstHalf = getLinesBytes(firstIndex, firstIndex+((lastIndex-firstIndex)/2));
+            byte[] secondHalf = getLinesBytes(firstIndex+((lastIndex-firstIndex)/2), lastIndex);
+            return Utils.mergeArrays(firstHalf, secondHalf);
+        }
+        if (multipleLinesBuffer == null || multipleLinesBuffer.capacity() < bytesToRead) {
+            multipleLinesBuffer = ByteBuffer.allocateDirect((int) bytesToRead);
+        }
+        return readAndFlip(multipleLinesBuffer, (int) bytesToRead, getLinePosition(firstIndex)).array();
     }
 
     public int getNumberOfLines() {

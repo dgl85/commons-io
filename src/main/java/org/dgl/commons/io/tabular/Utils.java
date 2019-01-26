@@ -79,8 +79,19 @@ public class Utils {
         return true;
     }
 
-    public static DataLine[] mergeArrays(DataLine[] firstHalf, DataLine[] secondHalf) {
-        DataLine[] complete = new DataLine[firstHalf.length+secondHalf.length];
+    public static <T> T[] mergeArrays(T[] firstHalf, T[] secondHalf) {
+        T[] complete = (T[]) new Object[firstHalf.length+secondHalf.length];
+        for (int i = 0; i < firstHalf.length; i++) {
+            complete[i] = firstHalf[i];
+        }
+        for (int i = 0; i < secondHalf.length; i++) {
+            complete[i+firstHalf.length] = secondHalf[i];
+        }
+        return complete;
+    }
+
+    public static byte[] mergeArrays(byte[] firstHalf, byte[] secondHalf) {
+        byte[] complete = new byte[firstHalf.length+secondHalf.length];
         for (int i = 0; i < firstHalf.length; i++) {
             complete[i] = firstHalf[i];
         }
