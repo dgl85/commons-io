@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class TabularFileReader {
 
-    private final int MAX_BUFFER_SIZE = Integer.MAX_VALUE;
+    private final int MAX_BUFFER_SIZE = Integer.MAX_VALUE / 10;
     private final int headerLength;
     private final int numberOfLines;
     private final int bytesPerLine;
@@ -50,7 +50,9 @@ public class TabularFileReader {
 
     public byte[] getLineBytes(int lineIndex) throws IOException {
         validateGet(lineIndex);
-        return readAndFlip(lineBuffer, getLinePosition(lineIndex)).array();
+        byte[] lineBytes = new byte[bytesPerLine];
+        readAndFlip(lineBuffer, getLinePosition(lineIndex)).get(lineBytes);
+        return lineBytes;
     }
 
     /**
@@ -94,7 +96,10 @@ public class TabularFileReader {
         if (multipleLinesBuffer == null || multipleLinesBuffer.capacity() < bytesToRead) {
             multipleLinesBuffer = ByteBuffer.allocateDirect((int) bytesToRead);
         }
-        return readAndFlip(multipleLinesBuffer, (int) bytesToRead, getLinePosition(firstIndex)).array();
+        byte[] linesBytes = new byte[(int)bytesToRead]; //At this point bytesToRead < Integer.MAX_VALUE always
+
+        readAndFlip(multipleLinesBuffer, (int) bytesToRead, getLinePosition(firstIndex)).get(linesBytes);
+        return linesBytes;
     }
 
     public int getNumberOfLines() {

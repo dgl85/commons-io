@@ -9,7 +9,7 @@ import java.nio.channels.FileChannel;
 
 public class TabularFileWriter {
 
-    private final int MAX_BUFFER_SIZE = Integer.MAX_VALUE;
+    private final int MAX_BUFFER_SIZE = Integer.MAX_VALUE / 10;
     private ByteBuffer multipleLinesBuffer = null;
     private final int bytesPerLine;
     private final int headerLength;
