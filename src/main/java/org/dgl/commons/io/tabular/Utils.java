@@ -1,5 +1,9 @@
 package org.dgl.commons.io.tabular;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 public class Utils {
 
     /**
@@ -119,5 +123,27 @@ public class Utils {
         halfs[0] = firstHalf;
         halfs[1] = secondHalf;
         return halfs;
+    }
+
+    public static List<File> getAllFilesInDirectory(File directory, String extension) {
+        List<File> fileList = new ArrayList<>();
+        File[] files = directory.listFiles();
+        for (File file : files) {
+            if (file.isFile()) {
+                if (extension == null) {
+                    fileList.add(file);
+                } else {
+                    String name = file.getName();
+                    int lastDotIndex = name.lastIndexOf(".");
+                    if (lastDotIndex >= 0) {
+                        String fileExtension = name.substring(lastDotIndex+1);
+                        if (extension.equalsIgnoreCase(fileExtension)) {
+                            fileList.add(file);
+                        }
+                    }
+                }
+            }
+        }
+        return fileList;
     }
 }

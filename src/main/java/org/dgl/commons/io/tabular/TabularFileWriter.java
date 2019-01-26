@@ -7,7 +7,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 
-public class FileWriter {
+public class TabularFileWriter {
 
     private final int MAX_BUFFER_SIZE = Integer.MAX_VALUE;
     private ByteBuffer multipleLinesBuffer = null;
@@ -21,7 +21,7 @@ public class FileWriter {
 
     public static final ByteOrder DEFAULT_ENDIANNESS = ByteOrder.BIG_ENDIAN;
 
-    public FileWriter(String filePath, DataLineStructure lineStructure, ByteOrder endianness) throws IOException {
+    public TabularFileWriter(String filePath, DataLineStructure lineStructure, ByteOrder endianness) throws IOException {
         this.filePath = filePath;
         this.lineStructure = lineStructure;
         bytesPerLine = lineStructure.getSizeInBytes();
@@ -40,7 +40,7 @@ public class FileWriter {
         currentLineIndex = (int)(fileChannel.size()-headerLength)/bytesPerLine;
     }
 
-    public FileWriter(String filePath, DataLineStructure lineStructure) throws IOException {
+    public TabularFileWriter(String filePath, DataLineStructure lineStructure) throws IOException {
         this(filePath, lineStructure, DEFAULT_ENDIANNESS);
     }
 
@@ -105,7 +105,7 @@ public class FileWriter {
     private ByteBuffer writeDataLinesToBuffer(DataLine[] dataLines, ByteBuffer writeBuffer) {
         writeBuffer.clear();
         for (int i = 0; i < dataLines.length; i++) {
-            if (!Utils.compareDataLineStructures(dataLines[i].getLineStructure(),lineStructure)) {
+            if (!Utils.compareDataLineStructures(dataLines[i].getLineStructure(), lineStructure)) {
                 throw new InvalidDataLineStructure();
             }
             appendDataLineToBuffer(dataLines[i], writeBuffer);
@@ -145,7 +145,7 @@ public class FileWriter {
     }
 
     private void verifyFileHeader(String filePath) throws IOException {
-        FileReader reader = new FileReader(filePath);
+        TabularFileReader reader = new TabularFileReader(filePath);
         DataLineStructure fileLineStructure = reader.getLineStructure();
         reader.close();
         if (!Utils.compareDataLineStructures(lineStructure, fileLineStructure)) {

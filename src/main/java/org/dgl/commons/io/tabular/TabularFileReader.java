@@ -7,7 +7,7 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
-public class FileReader {
+public class TabularFileReader {
 
     private final int MAX_BUFFER_SIZE = Integer.MAX_VALUE;
     private final int headerLength;
@@ -21,7 +21,7 @@ public class FileReader {
 
     public static final ByteOrder DEFAULT_ENDIANNESS = ByteOrder.BIG_ENDIAN;
 
-    public FileReader(String filePath, ByteOrder endianness) throws IOException {
+    public TabularFileReader(String filePath, ByteOrder endianness) throws IOException {
         this.filePath = filePath;
         fileChannel = new RandomAccessFile(filePath,"r").getChannel();
         lineStructure = getLineStructureFromFile();
@@ -39,7 +39,7 @@ public class FileReader {
         lineBuffer = ByteBuffer.allocateDirect(bytesPerLine).order(endianness);
     }
 
-    public FileReader(String filePath) throws IOException {
+    public TabularFileReader(String filePath) throws IOException {
         this(filePath, DEFAULT_ENDIANNESS);
     }
 
