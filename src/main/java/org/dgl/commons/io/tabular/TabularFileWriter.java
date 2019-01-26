@@ -7,6 +7,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 
+import static org.dgl.commons.io.Definitions.DEFAULT_ENDIANNESS;
+
 public class TabularFileWriter {
 
     private final int MAX_BUFFER_SIZE = Integer.MAX_VALUE / 10;
@@ -18,8 +20,6 @@ public class TabularFileWriter {
     private final FileChannel fileChannel;
     private final String filePath;
     private int currentLineIndex;
-
-    public static final ByteOrder DEFAULT_ENDIANNESS = ByteOrder.BIG_ENDIAN;
 
     public TabularFileWriter(String filePath, DataLineStructure lineStructure, ByteOrder endianness) throws IOException {
         this.filePath = filePath;

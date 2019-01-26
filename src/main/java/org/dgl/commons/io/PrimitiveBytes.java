@@ -1,13 +1,12 @@
 package org.dgl.commons.io;
 
 import java.nio.ByteOrder;
+import static org.dgl.commons.io.Definitions.DEFAULT_ENDIANNESS;
 
 /**
  * Direct Conversions between byte[] <-> primitives
  */
 public class PrimitiveBytes {
-
-    public static final ByteOrder DEFAULT_ENDIANNESS = ByteOrder.BIG_ENDIAN;
 
     //-------------------------------------------CHAR-------------------------------------------\\
     public static char getChar(byte[] bytes, int offset, ByteOrder endianness) {
