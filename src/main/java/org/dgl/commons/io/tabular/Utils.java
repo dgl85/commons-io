@@ -1,10 +1,47 @@
 package org.dgl.commons.io.tabular;
 
+import org.dgl.commons.io.PrimitiveBytes;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Utils {
+
+    public static byte[] getDataLineBytes(DataLine dataLine) {
+        DataLineStructure lineStructure = dataLine.getLineStructure();
+        byte[] bytes = new byte[lineStructure.getSizeInBytes()];
+        int currentOffset = 0;
+
+        for (int i = 0; i < dataLine.getNumberOfElements(); i++) {
+            byte elementType = lineStructure.getElementType(i);
+            switch (elementType) {
+                case PrimitiveType.BYTE:
+                    bytes[currentOffset] = dataLine.getByte(i);
+                    break;
+                case PrimitiveType.CHAR:
+                    PrimitiveBytes.putCharBytesInArray(dataLine.getChar(i), bytes, currentOffset);
+                    break;
+                case PrimitiveType.SHORT:
+                    PrimitiveBytes.putShortBytesInArray(dataLine.getShort(i), bytes, currentOffset);
+                    break;
+                case PrimitiveType.INT:
+                    PrimitiveBytes.putIntBytesInArray(dataLine.getInt(i), bytes, currentOffset);
+                    break;
+                case PrimitiveType.LONG:
+                    PrimitiveBytes.putLongBytesInArray(dataLine.getLong(i), bytes, currentOffset);
+                    break;
+                case PrimitiveType.FLOAT:
+                    PrimitiveBytes.putFloatBytesInArray(dataLine.getFloat(i), bytes, currentOffset);
+                    break;
+                case PrimitiveType.DOUBLE:
+                    PrimitiveBytes.putDoubleBytesInArray(dataLine.getDouble(i), bytes, currentOffset);
+                    break;
+            }
+            currentOffset += PrimitiveType.getSizeInBytesForType(elementType);
+        }
+        return bytes;
+    }
 
     /**
      *
