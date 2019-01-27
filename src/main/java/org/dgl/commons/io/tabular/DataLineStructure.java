@@ -26,9 +26,9 @@ public class DataLineStructure {
         }
         int oldTypeSize = 0;
         if (elementTypes[index] != 0) {
-            oldTypeSize = PrimitiveType.getLengthInBytesForType(elementTypes[index]);
+            oldTypeSize = PrimitiveType.getSizeInBytesForType(elementTypes[index]);
         }
-        sizeInBytes += PrimitiveType.getLengthInBytesForType(type)-oldTypeSize;
+        sizeInBytes += PrimitiveType.getSizeInBytesForType(type)-oldTypeSize;
         elementTypes[index] = type;
         return this;
     }

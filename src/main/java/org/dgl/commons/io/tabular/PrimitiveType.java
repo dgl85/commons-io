@@ -9,7 +9,7 @@ public class PrimitiveType {
     public static final byte FLOAT = 0x06;
     public static final byte DOUBLE = 0x07;
 
-    public static int getLengthInBytesForType(byte type) {
+    public static int getSizeInBytesForType(byte type) {
         int length;
         switch (type) {
             case PrimitiveType.BYTE:
