@@ -8,6 +8,40 @@ import java.util.List;
 
 public class Utils {
 
+    public static DataLine getDataLineFromBytes(byte[] dataLineBytes, DataLineStructure lineStructure) {
+        DataLine dataLine = new DataLine(lineStructure);
+        int currentOffset = 0;
+
+        for (int i = 0; i < dataLine.getNumberOfElements(); i++) {
+            byte elementType = lineStructure.getElementType(i);
+            switch (elementType) {
+                case PrimitiveType.BYTE:
+                    dataLine.setByte(i, dataLineBytes[currentOffset]);
+                    break;
+                case PrimitiveType.CHAR:
+                    dataLine.setChar(i, PrimitiveBytes.getChar(dataLineBytes, currentOffset));
+                    break;
+                case PrimitiveType.SHORT:
+                    dataLine.setShort(i, PrimitiveBytes.getShort(dataLineBytes, currentOffset));
+                    break;
+                case PrimitiveType.INT:
+                    dataLine.setInt(i, PrimitiveBytes.getInt(dataLineBytes, currentOffset));
+                    break;
+                case PrimitiveType.LONG:
+                    dataLine.setLong(i, PrimitiveBytes.getLong(dataLineBytes, currentOffset));
+                    break;
+                case PrimitiveType.FLOAT:
+                    dataLine.setFloat(i, PrimitiveBytes.getFloat(dataLineBytes, currentOffset));
+                    break;
+                case PrimitiveType.DOUBLE:
+                    dataLine.setDouble(i, PrimitiveBytes.getDouble(dataLineBytes, currentOffset));
+                    break;
+            }
+            currentOffset += PrimitiveType.getSizeInBytesForType(elementType);
+        }
+        return dataLine;
+    }
+
     public static byte[] getDataLineBytes(DataLine dataLine) {
         DataLineStructure lineStructure = dataLine.getLineStructure();
         byte[] bytes = new byte[lineStructure.getSizeInBytes()];
