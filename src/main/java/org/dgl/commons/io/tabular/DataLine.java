@@ -60,39 +60,46 @@ public class DataLine {
         return doubleElements[getInternalIndex(elementIndex)];
     }
 
-    public void setByte(int elementIndex, byte data) {
+    public DataLine setByte(int elementIndex, byte data) {
         validateRequest(elementIndex, PrimitiveType.BYTE);
         byteElements[getInternalIndex(elementIndex)] = data;
+        return this;
     }
 
-    public void setChar(int elementIndex, char data) {
+    public DataLine setChar(int elementIndex, char data) {
         validateRequest(elementIndex, PrimitiveType.CHAR);
         charElements[getInternalIndex(elementIndex)] = data;
+        return this;
     }
 
-    public void setShort(int elementIndex, short data) {
+    public DataLine setShort(int elementIndex, short data) {
         validateRequest(elementIndex, PrimitiveType.SHORT);
         shortElements[getInternalIndex(elementIndex)] = data;
+        return this;
     }
 
-    public void setInt(int elementIndex, int data) {
+    public DataLine setInt(int elementIndex, int data) {
         validateRequest(elementIndex, PrimitiveType.INT);
         intElements[getInternalIndex(elementIndex)] = data;
+        return this;
     }
 
-    public void setLong(int elementIndex, long data) {
+    public DataLine setLong(int elementIndex, long data) {
         validateRequest(elementIndex, PrimitiveType.LONG);
         longElements[getInternalIndex(elementIndex)] = data;
+        return this;
     }
 
-    public void setFloat(int elementIndex, float data) {
+    public DataLine setFloat(int elementIndex, float data) {
         validateRequest(elementIndex, PrimitiveType.FLOAT);
         floatElements[getInternalIndex(elementIndex)] = data;
+        return this;
     }
 
-    public void setDouble(int elementIndex, double data) {
+    public DataLine setDouble(int elementIndex, double data) {
         validateRequest(elementIndex, PrimitiveType.DOUBLE);
         doubleElements[getInternalIndex(elementIndex)] = data;
+        return this;
     }
 
     public int getSizeInBytes() {
