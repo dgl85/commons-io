@@ -5,17 +5,17 @@ package org.dgl.commons.io.tabular;
  */
 public class DataLine {
 
-    private final int numberOfElements;
-    private final DataLineStructure lineStructure;
-    private final byte[] elementsType;
-    private final int[] elementsInternalIndex;
-    private byte[] byteElements;
-    private char[] charElements;
-    private short[] shortElements;
-    private int[] intElements;
-    private long[] longElements;
-    private float[] floatElements;
-    private double[] doubleElements;
+    protected final int numberOfElements;
+    protected final DataLineStructure lineStructure;
+    protected final byte[] elementsType;
+    protected final int[] elementsInternalIndex;
+    protected byte[] byteElements;
+    protected char[] charElements;
+    protected short[] shortElements;
+    protected int[] intElements;
+    protected long[] longElements;
+    protected float[] floatElements;
+    protected double[] doubleElements;
 
     public DataLine(DataLineStructure lineStructure) {
         this.lineStructure = lineStructure;
@@ -114,7 +114,7 @@ public class DataLine {
         return lineStructure;
     }
 
-    private void initializeElementArrays() {
+    protected void initializeElementArrays() {
         int byteCounter = 0;
         int charCounter = 0;
         int shortCounter = 0;
@@ -171,17 +171,50 @@ public class DataLine {
         doubleElements = new double[doubleCounter];
     }
 
-    private int getInternalIndex(int elementIndex) {
+    protected int getInternalIndex(int elementIndex) {
         return elementsInternalIndex[elementIndex];
     }
 
-    private void validateRequest(int elementIndex, byte type) {
+    protected void validateRequest(int elementIndex, byte type) {
         if (elementIndex < 0 || elementIndex >= numberOfElements) {
             throw new IndexOutOfBoundsException();
         }
         if (type != elementsType[elementIndex]) {
             throw new InvalidFormatException();
         }
+    }
+
+    @Override
+    public String toString() {
+        String returnString = "";
+        for (int i = 0; i < lineStructure.getNumberOfElements(); i++) {
+            String element = (i > 0 ? "," : "");
+            switch (lineStructure.getElementType(i)) {
+                case PrimitiveType.BYTE:
+                    element = element.concat(Byte.toString(getByte(i)));
+                    break;
+                case PrimitiveType.CHAR:
+                    element = element.concat(Character.toString(getChar(i)));
+                    break;
+                case PrimitiveType.SHORT:
+                    element = element.concat(Short.toString(getShort(i)));
+                    break;
+                case PrimitiveType.INT:
+                    element = element.concat(Integer.toString(getInt(i)));
+                    break;
+                case PrimitiveType.LONG:
+                    element = element.concat(Long.toString(getLong(i)));
+                    break;
+                case PrimitiveType.FLOAT:
+                    element = element.concat(Float.toString(getFloat(i)));
+                    break;
+                case PrimitiveType.DOUBLE:
+                    element = element.concat(Double.toString(getDouble(i)));
+                    break;
+            }
+            returnString = returnString.concat(element);
+        }
+        return returnString;
     }
 
 }
