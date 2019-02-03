@@ -23,13 +23,13 @@ public class TabularFileReader {
 
     public TabularFileReader(String filePath, ByteOrder endianness) throws IOException {
         this.filePath = filePath;
-        fileChannel = new RandomAccessFile(filePath,"r").getChannel();
+        fileChannel = new RandomAccessFile(filePath, "r").getChannel();
         lineStructure = getLineStructureFromFile();
         bytesPerLine = lineStructure.getSizeInBytes();
         if (bytesPerLine > MAX_BUFFER_SIZE) {
             throw new IllegalStateException();
         }
-        headerLength = lineStructure.getNumberOfElements()+1;
+        headerLength = lineStructure.getNumberOfElements() + 1;
         long fileSize = fileChannel.size();
         if ((fileSize - headerLength) % bytesPerLine != 0) {
             close();
@@ -59,16 +59,16 @@ public class TabularFileReader {
      * Buffer allocation overhead must be taken into account when calling this method
      *
      * @param firstIndex inclusive
-     * @param lastIndex exclusive
+     * @param lastIndex  exclusive
      * @return
      * @throws IOException
      */
     public DataLine[] getLines(int firstIndex, int lastIndex) throws IOException {
         validateGet(firstIndex, lastIndex);
-        long bytesToRead = (lastIndex-firstIndex)*bytesPerLine;
+        long bytesToRead = (lastIndex - firstIndex) * bytesPerLine;
         if (bytesToRead > MAX_BUFFER_SIZE) {
-            DataLine[] firstHalf = getLines(firstIndex, firstIndex+((lastIndex-firstIndex)/2));
-            DataLine[] secondHalf = getLines(firstIndex+((lastIndex-firstIndex)/2), lastIndex);
+            DataLine[] firstHalf = getLines(firstIndex, firstIndex + ((lastIndex - firstIndex) / 2));
+            DataLine[] secondHalf = getLines(firstIndex + ((lastIndex - firstIndex) / 2), lastIndex);
             return Utils.mergeArrays(firstHalf, secondHalf);
         }
         if (multipleLinesBuffer == null || multipleLinesBuffer.capacity() < bytesToRead) {
@@ -81,22 +81,22 @@ public class TabularFileReader {
      * Buffer allocation overhead must be taken into account when calling this method
      *
      * @param firstIndex inclusive
-     * @param lastIndex exclusive
+     * @param lastIndex  exclusive
      * @return
      * @throws IOException
      */
     public byte[] getLinesBytes(int firstIndex, int lastIndex) throws IOException {
         validateGet(firstIndex, lastIndex);
-        long bytesToRead = (lastIndex-firstIndex)*bytesPerLine;
+        long bytesToRead = (lastIndex - firstIndex) * bytesPerLine;
         if (bytesToRead > MAX_BUFFER_SIZE) {
-            byte[] firstHalf = getLinesBytes(firstIndex, firstIndex+((lastIndex-firstIndex)/2));
-            byte[] secondHalf = getLinesBytes(firstIndex+((lastIndex-firstIndex)/2), lastIndex);
+            byte[] firstHalf = getLinesBytes(firstIndex, firstIndex + ((lastIndex - firstIndex) / 2));
+            byte[] secondHalf = getLinesBytes(firstIndex + ((lastIndex - firstIndex) / 2), lastIndex);
             return Utils.mergeArrays(firstHalf, secondHalf);
         }
         if (multipleLinesBuffer == null || multipleLinesBuffer.capacity() < bytesToRead) {
             multipleLinesBuffer = ByteBuffer.allocateDirect((int) bytesToRead);
         }
-        byte[] linesBytes = new byte[(int)bytesToRead]; //At this point bytesToRead < Integer.MAX_VALUE always
+        byte[] linesBytes = new byte[(int) bytesToRead]; //At this point bytesToRead < Integer.MAX_VALUE always
 
         readAndFlip(multipleLinesBuffer, (int) bytesToRead, getLinePosition(firstIndex)).get(linesBytes);
         return linesBytes;
@@ -128,7 +128,7 @@ public class TabularFileReader {
         if (data.limit() % lineStructure.getSizeInBytes() != 0) {
             throw new IllegalStateException();
         }
-        DataLine[] dataLines = new DataLine[data.limit()/lineStructure.getSizeInBytes()];
+        DataLine[] dataLines = new DataLine[data.limit() / lineStructure.getSizeInBytes()];
         for (int i = 0; i < dataLines.length; i++) {
             DataLine dataLine = new DataLine(lineStructure);
             for (int j = 0; j < lineStructure.getNumberOfElements(); j++) {
@@ -146,13 +146,13 @@ public class TabularFileReader {
                         dataLine.setInt(j, data.getInt());
                         break;
                     case PrimitiveType.LONG:
-                        dataLine.setLong(j,data.getLong());
+                        dataLine.setLong(j, data.getLong());
                         break;
                     case PrimitiveType.FLOAT:
-                        dataLine.setFloat(j,data.getFloat());
+                        dataLine.setFloat(j, data.getFloat());
                         break;
                     case PrimitiveType.DOUBLE:
-                        dataLine.setDouble(j,data.getDouble());
+                        dataLine.setDouble(j, data.getDouble());
                         break;
                     default:
                         throw new IllegalArgumentException();
@@ -185,7 +185,7 @@ public class TabularFileReader {
     }
 
     private long getLinePosition(int lineIndex) {
-        return (lineIndex*bytesPerLine)+headerLength;
+        return (lineIndex * bytesPerLine) + headerLength;
     }
 
     private DataLineStructure getLineStructureFromFile() throws IOException {
@@ -195,7 +195,7 @@ public class TabularFileReader {
         while (!done) {
             readAndFlip(byteBuffer, header.size());
             byte readByte = byteBuffer.get();
-            if  (readByte == 0) {
+            if (readByte == 0) {
                 done = true;
             } else {
                 header.add(readByte);
@@ -214,6 +214,7 @@ public class TabularFileReader {
 
     /**
      * Buffer might be sliced, so returned buffer must be used, specially if bytesToRead != buffer.capacity()
+     *
      * @param buffer
      * @param bytesToRead
      * @param filePosition
@@ -221,18 +222,18 @@ public class TabularFileReader {
      * @throws IOException
      */
     private ByteBuffer readAndFlip(ByteBuffer buffer, int bytesToRead, long filePosition) throws IOException {
-        if (filePosition+bytesToRead > fileChannel.size() || bytesToRead > buffer.capacity()) {
+        if (filePosition + bytesToRead > fileChannel.size() || bytesToRead > buffer.capacity()) {
             throw new IOException();
         }
         ByteBuffer finalBuffer = buffer;
         if (bytesToRead != buffer.capacity()) {
-            buffer.position(buffer.capacity()-bytesToRead);
+            buffer.position(buffer.capacity() - bytesToRead);
             finalBuffer = buffer.slice();
         }
         finalBuffer.clear();
-        int totalBytesRead = fileChannel.read(finalBuffer,filePosition);
+        int totalBytesRead = fileChannel.read(finalBuffer, filePosition);
         while (totalBytesRead != bytesToRead) {
-            totalBytesRead += fileChannel.read(finalBuffer,filePosition+totalBytesRead);
+            totalBytesRead += fileChannel.read(finalBuffer, filePosition + totalBytesRead);
         }
         finalBuffer.flip();
         return finalBuffer;

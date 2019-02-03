@@ -12,32 +12,33 @@ import static org.dgl.commons.io.Definitions.DEFAULT_ENDIANNESS;
 public class TabularFileWriter {
 
     private final int MAX_BUFFER_SIZE = Integer.MAX_VALUE / 10;
-    private ByteBuffer multipleLinesBuffer = null;
     private final int bytesPerLine;
     private final int headerLength;
     private final DataLineStructure lineStructure;
     private final ByteBuffer lineBuffer;
     private final FileChannel fileChannel;
     private final String filePath;
+    private ByteBuffer multipleLinesBuffer = null;
     private int currentLineIndex;
 
-    public TabularFileWriter(String filePath, DataLineStructure lineStructure, ByteOrder endianness) throws IOException {
+    public TabularFileWriter(String filePath, DataLineStructure lineStructure, ByteOrder endianness)
+            throws IOException {
         this.filePath = filePath;
         this.lineStructure = lineStructure;
         bytesPerLine = lineStructure.getSizeInBytes();
         if (bytesPerLine > MAX_BUFFER_SIZE) {
             throw new IllegalStateException();
         }
-        headerLength = lineStructure.getNumberOfElements()+1;
+        headerLength = lineStructure.getNumberOfElements() + 1;
         if (new File(filePath).exists()) {
             verifyFileHeader(filePath);
-            fileChannel = new RandomAccessFile(filePath,"rw").getChannel();
+            fileChannel = new RandomAccessFile(filePath, "rw").getChannel();
         } else {
-            fileChannel = new RandomAccessFile(filePath,"rw").getChannel();
+            fileChannel = new RandomAccessFile(filePath, "rw").getChannel();
             writeFileHeader();
         }
         lineBuffer = ByteBuffer.allocateDirect(lineStructure.getSizeInBytes()).order(endianness);
-        currentLineIndex = (int)(fileChannel.size()-headerLength)/bytesPerLine;
+        currentLineIndex = (int) (fileChannel.size() - headerLength) / bytesPerLine;
     }
 
     public TabularFileWriter(String filePath, DataLineStructure lineStructure) throws IOException {
@@ -66,7 +67,7 @@ public class TabularFileWriter {
             if (bytesToWrite > MAX_BUFFER_SIZE) {
                 DataLine[][] halfs = Utils.splitArrayInHalfs(dataLines);
                 writeLines(startLineIndex, halfs[0]);
-                writeLines(startLineIndex+halfs[0].length, halfs[1]);
+                writeLines(startLineIndex + halfs[0].length, halfs[1]);
                 return;
             }
             if (multipleLinesBuffer == null || multipleLinesBuffer.capacity() < bytesToWrite) {
@@ -79,8 +80,8 @@ public class TabularFileWriter {
         writeBuffer.clear();
         writeDataLinesToBuffer(dataLines, writeBuffer);
         flipAndWrite(writeBuffer, getLinePosition(startLineIndex));
-        if (startLineIndex+dataLines.length > currentLineIndex) {
-            currentLineIndex += dataLines.length+startLineIndex-currentLineIndex;
+        if (startLineIndex + dataLines.length > currentLineIndex) {
+            currentLineIndex += dataLines.length + startLineIndex - currentLineIndex;
         }
     }
 
@@ -91,7 +92,7 @@ public class TabularFileWriter {
     public void close() {
         try {
             fileChannel.close();
-        } catch (IOException e){}
+        } catch (IOException e) {}
     }
 
     public String getFilePath() {
@@ -99,7 +100,7 @@ public class TabularFileWriter {
     }
 
     private long getLinePosition(int lineIndex) {
-        return (lineIndex*bytesPerLine)+headerLength;
+        return (lineIndex * bytesPerLine) + headerLength;
     }
 
     private ByteBuffer writeDataLinesToBuffer(DataLine[] dataLines, ByteBuffer writeBuffer) {
@@ -154,19 +155,18 @@ public class TabularFileWriter {
     }
 
     private void writeFileHeader() throws IOException {
-        ByteBuffer headerBuffer = ByteBuffer.allocate(lineStructure.getNumberOfElements()+1);
+        ByteBuffer headerBuffer = ByteBuffer.allocate(lineStructure.getNumberOfElements() + 1);
         headerBuffer.clear();
         for (int i = 0; i < lineStructure.getNumberOfElements(); i++) {
             headerBuffer.put(lineStructure.getElementType(i));
         }
-        headerBuffer.put((byte)0);
+        headerBuffer.put((byte) 0);
         flipAndWrite(headerBuffer, 0);
     }
 
     private void flipAndWrite(ByteBuffer buffer, long position) throws IOException {
         buffer.flip();
-        while (buffer.hasRemaining())
-        {
+        while (buffer.hasRemaining()) {
             fileChannel.write(buffer, position);
         }
     }

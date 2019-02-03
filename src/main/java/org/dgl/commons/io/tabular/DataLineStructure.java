@@ -3,17 +3,17 @@ package org.dgl.commons.io.tabular;
 public class DataLineStructure {
 
     private static final byte DEFAULT_DATA_TYPE = PrimitiveType.DOUBLE;
-    private int sizeInBytes = 0;
     private final byte[] elementTypes;
+    private int sizeInBytes = 0;
 
     public DataLineStructure(int length) {
         elementTypes = new byte[length];
-        for (int i = 0; i < length; i++){
+        for (int i = 0; i < length; i++) {
             setElementType(i, DEFAULT_DATA_TYPE);
         }
     }
 
-    public DataLineStructure(byte ...  primitiveTypes) {
+    public DataLineStructure(byte... primitiveTypes) {
         elementTypes = new byte[primitiveTypes.length];
         for (int i = 0; i < elementTypes.length; i++) {
             setElementType(i, primitiveTypes[i]);
@@ -28,25 +28,25 @@ public class DataLineStructure {
         if (elementTypes[index] != 0) {
             oldTypeSize = PrimitiveType.getSizeInBytesForType(elementTypes[index]);
         }
-        sizeInBytes += PrimitiveType.getSizeInBytesForType(type)-oldTypeSize;
+        sizeInBytes += PrimitiveType.getSizeInBytesForType(type) - oldTypeSize;
         elementTypes[index] = type;
         return this;
     }
 
     /**
      * @param startIndex inclusive
-     * @param endIndex exclusive
+     * @param endIndex   exclusive
      * @param type
      */
     public DataLineStructure setRangeType(int startIndex, int endIndex, byte type) {
         for (int i = startIndex; i < endIndex; i++) {
-            setElementType(i,type);
+            setElementType(i, type);
         }
         return this;
     }
 
     public DataLineStructure setAllType(byte type) {
-        setRangeType(0,getNumberOfElements(),type);
+        setRangeType(0, getNumberOfElements(), type);
         return this;
     }
 
@@ -58,8 +58,7 @@ public class DataLineStructure {
         return elementTypes[index];
     }
 
-    public int getSizeInBytes()
-    {
+    public int getSizeInBytes() {
         return sizeInBytes;
     }
 }

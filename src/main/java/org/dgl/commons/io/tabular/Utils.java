@@ -78,7 +78,6 @@ public class Utils {
     }
 
     /**
-     *
      * @param structure1
      * @param structure2
      * @return true if equal, false otherwise
@@ -100,7 +99,6 @@ public class Utils {
     }
 
     /**
-     *
      * @param line1
      * @param line2
      * @return true if equal, false otherwise
@@ -155,41 +153,40 @@ public class Utils {
     }
 
     public static <T> T[] mergeArrays(T[] firstHalf, T[] secondHalf) {
-        T[] complete = (T[]) new Object[firstHalf.length+secondHalf.length];
+        T[] complete = (T[]) new Object[firstHalf.length + secondHalf.length];
         for (int i = 0; i < firstHalf.length; i++) {
             complete[i] = firstHalf[i];
         }
         for (int i = 0; i < secondHalf.length; i++) {
-            complete[i+firstHalf.length] = secondHalf[i];
+            complete[i + firstHalf.length] = secondHalf[i];
         }
         return complete;
     }
 
     public static byte[] mergeArrays(byte[] firstHalf, byte[] secondHalf) {
-        byte[] complete = new byte[firstHalf.length+secondHalf.length];
+        byte[] complete = new byte[firstHalf.length + secondHalf.length];
         for (int i = 0; i < firstHalf.length; i++) {
             complete[i] = firstHalf[i];
         }
         for (int i = 0; i < secondHalf.length; i++) {
-            complete[i+firstHalf.length] = secondHalf[i];
+            complete[i + firstHalf.length] = secondHalf[i];
         }
         return complete;
     }
 
     /**
-     *
      * @param data
      * @return [firstHalf, secondHalf]
      */
     public static <T> T[][] splitArrayInHalfs(T[] data) {
         T[][] halfs = (T[][]) new Object[2][];
-        T[] firstHalf = (T[]) new Object[data.length/2];
-        T[] secondHalf = (T[]) new Object[data.length-firstHalf.length];
+        T[] firstHalf = (T[]) new Object[data.length / 2];
+        T[] secondHalf = (T[]) new Object[data.length - firstHalf.length];
         for (int i = 0; i < firstHalf.length; i++) {
             firstHalf[i] = data[i];
         }
         for (int i = 0; i < secondHalf.length; i++) {
-            secondHalf[i] = data[firstHalf.length+i];
+            secondHalf[i] = data[firstHalf.length + i];
         }
         halfs[0] = firstHalf;
         halfs[1] = secondHalf;
@@ -207,7 +204,7 @@ public class Utils {
                     String name = file.getName();
                     int lastDotIndex = name.lastIndexOf(".");
                     if (lastDotIndex >= 0) {
-                        String fileExtension = name.substring(lastDotIndex+1);
+                        String fileExtension = name.substring(lastDotIndex + 1);
                         if (extension.equalsIgnoreCase(fileExtension)) {
                             fileList.add(file);
                         }
