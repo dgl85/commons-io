@@ -65,7 +65,7 @@ public class TabularFileReader {
      */
     public DataLine[] getLines(int firstIndex, int lastIndex) throws IOException {
         validateGet(firstIndex, lastIndex);
-        long bytesToRead = (lastIndex - firstIndex) * bytesPerLine;
+        long bytesToRead = (long) (lastIndex - firstIndex) * (long) bytesPerLine;
         if (bytesToRead > MAX_BUFFER_SIZE) {
             DataLine[] firstHalf = getLines(firstIndex, firstIndex + ((lastIndex - firstIndex) / 2));
             DataLine[] secondHalf = getLines(firstIndex + ((lastIndex - firstIndex) / 2), lastIndex);
@@ -87,7 +87,7 @@ public class TabularFileReader {
      */
     public byte[] getLinesBytes(int firstIndex, int lastIndex) throws IOException {
         validateGet(firstIndex, lastIndex);
-        long bytesToRead = (lastIndex - firstIndex) * bytesPerLine;
+        long bytesToRead = (long) (lastIndex - firstIndex) * (long) bytesPerLine;
         if (bytesToRead > MAX_BUFFER_SIZE) {
             byte[] firstHalf = getLinesBytes(firstIndex, firstIndex + ((lastIndex - firstIndex) / 2));
             byte[] secondHalf = getLinesBytes(firstIndex + ((lastIndex - firstIndex) / 2), lastIndex);
@@ -185,7 +185,7 @@ public class TabularFileReader {
     }
 
     private long getLinePosition(int lineIndex) {
-        return (lineIndex * bytesPerLine) + headerLength;
+        return ((long) lineIndex * (long) bytesPerLine) + (long) headerLength;
     }
 
     private DataLineStructure getLineStructureFromFile() throws IOException {

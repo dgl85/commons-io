@@ -63,7 +63,7 @@ public class TabularFileWriter {
         }
         ByteBuffer writeBuffer;
         if (dataLines.length > 1) {
-            long bytesToWrite = dataLines.length * bytesPerLine;
+            long bytesToWrite = (long) dataLines.length * (long) bytesPerLine;
             if (bytesToWrite > MAX_BUFFER_SIZE) {
                 DataLine[][] halfs = Utils.splitArrayInHalfs(dataLines);
                 writeLines(startLineIndex, halfs[0]);
@@ -100,7 +100,7 @@ public class TabularFileWriter {
     }
 
     private long getLinePosition(int lineIndex) {
-        return (lineIndex * bytesPerLine) + headerLength;
+        return ((long) lineIndex * (long) bytesPerLine) + (long) headerLength;
     }
 
     private ByteBuffer writeDataLinesToBuffer(DataLine[] dataLines, ByteBuffer writeBuffer) {
