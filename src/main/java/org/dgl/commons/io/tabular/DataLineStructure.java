@@ -2,7 +2,7 @@ package org.dgl.commons.io.tabular;
 
 public class DataLineStructure {
 
-    private static final byte DEFAULT_DATA_TYPE = PrimitiveType.FLOAT;
+    private static final byte DEFAULT_DATA_TYPE = PrimitiveType.DOUBLE;
     private int sizeInBytes = 0;
     private final byte[] elementTypes;
 
