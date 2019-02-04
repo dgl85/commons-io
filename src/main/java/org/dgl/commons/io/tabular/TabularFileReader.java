@@ -31,11 +31,11 @@ public class TabularFileReader {
         }
         headerLength = lineStructure.getNumberOfElements() + 1;
         long fileSize = fileChannel.size();
-        if ((fileSize - headerLength) % bytesPerLine != 0) {
+        if ((fileSize - (long) headerLength) % (long) bytesPerLine != 0) {
             close();
             throw new IOException();
         }
-        numberOfLines = (int) (fileSize - headerLength) / bytesPerLine;
+        numberOfLines = (int) ((fileSize - (long) headerLength) / (long) bytesPerLine);
         lineBuffer = ByteBuffer.allocateDirect(bytesPerLine).order(endianness);
     }
 
