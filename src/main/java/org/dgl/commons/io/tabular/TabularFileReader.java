@@ -33,7 +33,7 @@ public class TabularFileReader {
         long fileSize = fileChannel.size();
         if ((fileSize - (long) headerLength) % (long) bytesPerLine != 0) {
             close();
-            throw new IOException();
+            throw new IOException("Invalid file size");
         }
         numberOfLines = (int) ((fileSize - (long) headerLength) / (long) bytesPerLine);
         lineBuffer = ByteBuffer.allocateDirect(bytesPerLine).order(endianness);
