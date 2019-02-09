@@ -8,9 +8,7 @@ public class DataLineStructure {
 
     public DataLineStructure(int length) {
         elementTypes = new byte[length];
-        for (int i = 0; i < length; i++) {
-            setElementType(i, DEFAULT_DATA_TYPE);
-        }
+        setAllType(DEFAULT_DATA_TYPE);
     }
 
     public DataLineStructure(byte... primitiveTypes) {
