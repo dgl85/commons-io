@@ -36,6 +36,8 @@ public class Utils {
                 case PrimitiveType.DOUBLE:
                     dataLine.setDouble(i, PrimitiveBytes.getDouble(dataLineBytes, currentOffset));
                     break;
+                default:
+                    throw new IllegalStateException();
             }
             currentOffset += PrimitiveType.getSizeInBytesForType(elementType);
         }
@@ -71,6 +73,8 @@ public class Utils {
                 case PrimitiveType.DOUBLE:
                     PrimitiveBytes.putDoubleBytesInArray(dataLine.getDouble(i), bytes, currentOffset);
                     break;
+                default:
+                    throw new IllegalStateException();
             }
             currentOffset += PrimitiveType.getSizeInBytesForType(elementType);
         }
@@ -146,7 +150,7 @@ public class Utils {
                     }
                     break;
                 default:
-                    throw new IllegalArgumentException();
+                    throw new IllegalStateException();
             }
         }
         return true;

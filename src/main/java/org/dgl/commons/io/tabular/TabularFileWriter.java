@@ -11,7 +11,7 @@ import static org.dgl.commons.io.Definitions.DEFAULT_ENDIANNESS;
 
 public class TabularFileWriter {
 
-    private final int MAX_BUFFER_SIZE = Integer.MAX_VALUE / 10;
+    private static final int MAX_BUFFER_SIZE = Integer.MAX_VALUE / 10;
     private final int bytesPerLine;
     private final int headerLength;
     private final DataLineStructure lineStructure;

@@ -160,6 +160,8 @@ public class DataLine {
                     elementsInternalIndex[i] = doubleCounter;
                     doubleCounter++;
                     break;
+                default:
+                    throw new IllegalArgumentException();
             }
         }
         byteElements = new byte[byteCounter];
@@ -211,6 +213,8 @@ public class DataLine {
                 case PrimitiveType.DOUBLE:
                     element = element.concat(Double.toString(getDouble(i)));
                     break;
+                default:
+                    throw new IllegalStateException();
             }
             returnString = returnString.concat(element);
         }
