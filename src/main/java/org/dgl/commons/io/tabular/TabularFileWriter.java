@@ -31,7 +31,12 @@ public class TabularFileWriter {
         }
         headerLength = lineStructure.getNumberOfElements() + 1;
         if (new File(filePath).exists()) {
-            verifyFileHeader(filePath);
+            try {
+                verifyFileHeaderAndSize(filePath);
+            } catch (IllegalStateException | InvalidDataLineStructureException e) {
+                close();
+                throw e;
+            }
             fileChannel = new RandomAccessFile(filePath, "rw").getChannel();
         } else {
             fileChannel = new RandomAccessFile(filePath, "rw").getChannel();
@@ -107,7 +112,7 @@ public class TabularFileWriter {
         writeBuffer.clear();
         for (int i = 0; i < dataLines.length; i++) {
             if (!Utils.compareDataLineStructures(dataLines[i].getLineStructure(), lineStructure)) {
-                throw new InvalidDataLineStructure();
+                throw new InvalidDataLineStructureException();
             }
             appendDataLineToBuffer(dataLines[i], writeBuffer);
         }
@@ -145,12 +150,16 @@ public class TabularFileWriter {
         return writeBuffer;
     }
 
-    private void verifyFileHeader(String filePath) throws IOException {
+    private void verifyFileHeaderAndSize(String filePath) throws IOException {
         TabularFileReader reader = new TabularFileReader(filePath);
         DataLineStructure fileLineStructure = reader.getLineStructure();
         reader.close();
         if (!Utils.compareDataLineStructures(lineStructure, fileLineStructure)) {
-            throw new InvalidDataLineStructure();
+            throw new InvalidDataLineStructureException();
+        }
+        long fileSize = fileChannel.size();
+        if ((fileSize - (long) headerLength) % (long) bytesPerLine != 0) {
+            throw new IllegalStateException("Invalid file size");
         }
     }
 
