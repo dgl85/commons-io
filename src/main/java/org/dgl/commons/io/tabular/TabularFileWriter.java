@@ -32,7 +32,7 @@ public class TabularFileWriter {
         headerLength = lineStructure.getNumberOfElements() + 1;
         if (new File(filePath).exists()) {
             try {
-                verifyFileHeaderAndSize(filePath);
+                verifyFileHeader(filePath);
             } catch (IllegalStateException | InvalidDataLineStructureException e) {
                 close();
                 throw e;
@@ -150,16 +150,12 @@ public class TabularFileWriter {
         return writeBuffer;
     }
 
-    private void verifyFileHeaderAndSize(String filePath) throws IOException {
+    private void verifyFileHeader(String filePath) throws IOException {
         TabularFileReader reader = new TabularFileReader(filePath);
         DataLineStructure fileLineStructure = reader.getLineStructure();
         reader.close();
         if (!Utils.compareDataLineStructures(lineStructure, fileLineStructure)) {
             throw new InvalidDataLineStructureException();
-        }
-        long fileSize = fileChannel.size();
-        if ((fileSize - (long) headerLength) % (long) bytesPerLine != 0) {
-            throw new IllegalStateException("Invalid file size");
         }
     }
 
