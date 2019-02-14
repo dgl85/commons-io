@@ -17,13 +17,15 @@ public class TabularFileReader {
     private final int bytesPerLine;
     private final DataLineStructure lineStructure;
     private final FileChannel fileChannel;
+    private final RandomAccessFile randomAccessFile;
     private final ByteBuffer lineBuffer;
     private final String filePath;
     private ByteBuffer multipleLinesBuffer = null;
 
     public TabularFileReader(String filePath, ByteOrder endianness) throws IOException {
         this.filePath = filePath;
-        fileChannel = new RandomAccessFile(filePath, "r").getChannel();
+        randomAccessFile = new RandomAccessFile(filePath, "r");
+        fileChannel = randomAccessFile.getChannel();
         lineStructure = getLineStructureFromFile();
         bytesPerLine = lineStructure.getSizeInBytes();
         if (bytesPerLine > MAX_BUFFER_SIZE) {
@@ -112,7 +114,7 @@ public class TabularFileReader {
 
     public void close() {
         try {
-            fileChannel.close();
+            randomAccessFile.close();
         } catch (IOException e) {}
     }
 
