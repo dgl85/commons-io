@@ -17,6 +17,7 @@ public class TabularFileWriter {
     private final DataLineStructure lineStructure;
     private final ByteBuffer lineBuffer;
     private final FileChannel fileChannel;
+    private final RandomAccessFile randomAccessFile;
     private final String filePath;
     private ByteBuffer multipleLinesBuffer = null;
     private int currentLineIndex;
@@ -30,6 +31,7 @@ public class TabularFileWriter {
             throw new IllegalStateException();
         }
         headerLength = lineStructure.getNumberOfElements() + 1;
+        boolean newFile = true;
         if (new File(filePath).exists()) {
             try {
                 verifyFileHeader(filePath);
@@ -37,9 +39,11 @@ public class TabularFileWriter {
                 close();
                 throw e;
             }
-            fileChannel = new RandomAccessFile(filePath, "rw").getChannel();
-        } else {
-            fileChannel = new RandomAccessFile(filePath, "rw").getChannel();
+            newFile = false;
+        }
+        randomAccessFile = new RandomAccessFile(filePath, "rw");
+        fileChannel = randomAccessFile.getChannel();
+        if (newFile) {
             writeFileHeader();
         }
         lineBuffer = ByteBuffer.allocateDirect(lineStructure.getSizeInBytes()).order(endianness);
@@ -96,7 +100,7 @@ public class TabularFileWriter {
 
     public void close() {
         try {
-            fileChannel.close();
+            randomAccessFile.close();
         } catch (IOException e) {}
     }
 
