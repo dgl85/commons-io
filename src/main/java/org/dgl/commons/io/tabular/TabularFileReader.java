@@ -112,10 +112,14 @@ public class TabularFileReader {
         return lineStructure;
     }
 
-    public void close() {
+    public void closeQuietly() {
         try {
-            randomAccessFile.close();
-        } catch (IOException e) {}
+            close();
+        } catch (IOException | NullPointerException e) {}
+    }
+
+    public void close() throws IOException {
+        randomAccessFile.close();
     }
 
     public boolean isOpen() {

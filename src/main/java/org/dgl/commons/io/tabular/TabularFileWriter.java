@@ -98,10 +98,14 @@ public class TabularFileWriter {
         return fileChannel.isOpen();
     }
 
-    public void close() {
+    public void closeQuietly() {
         try {
-            randomAccessFile.close();
-        } catch (IOException e) {}
+            close();
+        } catch (IOException | NullPointerException e) {}
+    }
+
+    public void close() throws IOException {
+        randomAccessFile.close();
     }
 
     public String getFilePath() {
