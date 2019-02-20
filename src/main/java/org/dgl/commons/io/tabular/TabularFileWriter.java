@@ -47,7 +47,7 @@ public class TabularFileWriter {
             writeFileHeader();
         }
         lineBuffer = ByteBuffer.allocateDirect(lineStructure.getSizeInBytes()).order(endianness);
-        currentLineIndex = (int) (fileChannel.size() - headerLength) / bytesPerLine;
+        currentLineIndex = (int) ((fileChannel.size() - (long) headerLength) / (long) bytesPerLine);
     }
 
     public TabularFileWriter(String filePath, DataLineStructure lineStructure) throws IOException {
