@@ -170,7 +170,7 @@ public class TabularFileReader {
     }
 
     private void validateGet(int lineIndex) throws IOException {
-        if (lineIndex < 0 || lineIndex > numberOfLines) {
+        if (lineIndex < 0 || lineIndex >= numberOfLines) {
             throw new IndexOutOfBoundsException();
         }
         if (!isOpen()) {
