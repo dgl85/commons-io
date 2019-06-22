@@ -27,6 +27,16 @@ public class UnifiedTabularFileReader implements TabularReader {
     /**
      * Files are sorted based on their full path
      *
+     * @param directories
+     * @param filterFunction file is included if function returns true
+     */
+    public UnifiedTabularFileReader(File[] directories, Function<File, Boolean> filterFunction) throws IOException {
+        this(directories, filterFunction, Comparator.comparing(File::getAbsolutePath));
+    }
+
+    /**
+     * Files are sorted based on their full path
+     *
      * @param directory
      * @param fileExtension include file with this extension only
      */
