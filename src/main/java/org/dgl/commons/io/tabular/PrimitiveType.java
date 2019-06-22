@@ -1,6 +1,7 @@
 package org.dgl.commons.io.tabular;
 
 public class PrimitiveType {
+
     public static final byte BYTE = 0x01;
     public static final byte CHAR = 0x02;
     public static final byte SHORT = 0x03;
