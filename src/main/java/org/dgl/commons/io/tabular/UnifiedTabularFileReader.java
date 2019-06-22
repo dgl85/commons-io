@@ -66,11 +66,11 @@ public class UnifiedTabularFileReader implements TabularReader {
             if (!path.exists() || !path.isDirectory()) {
                 throw new IllegalArgumentException();
             }
-            List<File> selectedFiles = Utils.getAllFilesInDirectory(path, null);
-            for (File selectedFile : selectedFiles) {
-                boolean include = filterFunction.apply(selectedFile);
+            List<File> allFiles = Utils.getAllFilesInDirectory(path, null);
+            for (File file : allFiles) {
+                boolean include = filterFunction.apply(file);
                 if (include) {
-                    sortedFiles.add(selectedFile);
+                    sortedFiles.add(file);
                 }
             }
         }
