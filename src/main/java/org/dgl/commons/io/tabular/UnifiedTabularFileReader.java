@@ -3,6 +3,7 @@ package org.dgl.commons.io.tabular;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * Class to read several tabular files in one or more directories as one
@@ -17,38 +18,60 @@ public class UnifiedTabularFileReader implements TabularReader {
      * Files are sorted based on their full path
      *
      * @param directories
-     * @param fileExtension null for no extension filter
+     * @param fileExtension include file with this extension only
      */
     public UnifiedTabularFileReader(File[] directories, String fileExtension) throws IOException {
         this(directories, fileExtension, Comparator.comparing(File::getAbsolutePath));
     }
 
     /**
-     * Files are sorted based on their full directories
+     * Files are sorted based on their full path
      *
-     * @param directories
-     * @param fileExtension null for no extension filter
+     * @param directory
+     * @param fileExtension include file with this extension only
      */
-    public UnifiedTabularFileReader(File directories, String fileExtension) throws IOException {
-        this(new File[]{directories}, fileExtension, Comparator.comparing(File::getAbsolutePath));
+    public UnifiedTabularFileReader(File directory, String fileExtension) throws IOException {
+        this(new File[]{directory}, fileExtension, Comparator.comparing(File::getAbsolutePath));
     }
 
     /**
      * @param directories
-     * @param fileExtension        null for no extension filter
-     * @param customFileComparator comparator for file sorting
+     * @param fileExtension     include file with this extension only
+     * @param sortingComparator comparator for file sorting
      * @throws IOException
      */
-    public UnifiedTabularFileReader(File[] directories, String fileExtension, Comparator<File> customFileComparator)
+    public UnifiedTabularFileReader(File[] directories, String fileExtension, Comparator<File> sortingComparator)
             throws IOException {
-        SortedSet<File> sortedFiles = new TreeSet<>(customFileComparator);
+        this(directories, (file) -> {
+            String name = file.getName();
+            int lastDotIndex = name.lastIndexOf(".");
+            if (lastDotIndex >= 0) {
+                String extension = name.substring(lastDotIndex + 1);
+                return extension.equalsIgnoreCase(fileExtension);
+            }
+            return false;
+        }, sortingComparator);
+    }
+
+    /**
+     * @param directories
+     * @param filterFunction    file is included if function returns true
+     * @param sortingComparator comparator for file sorting
+     * @throws IOException
+     */
+    public UnifiedTabularFileReader(File[] directories, Function<File, Boolean> filterFunction,
+            Comparator<File> sortingComparator) throws IOException {
+        SortedSet<File> sortedFiles = new TreeSet<>(sortingComparator);
         for (File path : directories) {
             if (!path.exists() || !path.isDirectory()) {
                 throw new IllegalArgumentException();
             }
-            List<File> selectedFiles = Utils.getAllFilesInDirectory(path, fileExtension);
+            List<File> selectedFiles = Utils.getAllFilesInDirectory(path, null);
             for (File selectedFile : selectedFiles) {
-                sortedFiles.add(selectedFile);
+                boolean include = filterFunction.apply(selectedFile);
+                if (include) {
+                    sortedFiles.add(selectedFile);
+                }
             }
         }
         sortedDataFileReaders = new TabularFileReader[sortedFiles.size()];
