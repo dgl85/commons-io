@@ -61,19 +61,7 @@ public class UnifiedTabularFileReader implements TabularReader {
      */
     public UnifiedTabularFileReader(File[] directories, Function<File, Boolean> filterFunction,
             Comparator<File> sortingComparator) throws IOException {
-        SortedSet<File> sortedFiles = new TreeSet<>(sortingComparator);
-        for (File path : directories) {
-            if (!path.exists() || !path.isDirectory()) {
-                throw new IllegalArgumentException();
-            }
-            List<File> allFiles = Utils.getAllFilesInDirectory(path, null);
-            for (File file : allFiles) {
-                boolean include = filterFunction.apply(file);
-                if (include) {
-                    sortedFiles.add(file);
-                }
-            }
-        }
+        SortedSet<File> sortedFiles = getSortedFiles(directories, filterFunction, sortingComparator);
         sortedDataFileReaders = new TabularFileReader[sortedFiles.size()];
         fileBaseIndexes = new int[sortedFiles.size()];
         int lineCounter = 0;
@@ -112,6 +100,24 @@ public class UnifiedTabularFileReader implements TabularReader {
         for (TabularFileReader reader : sortedDataFileReaders) {
             reader.closeQuietly();
         }
+    }
+
+    private SortedSet<File> getSortedFiles(File[] directories, Function<File, Boolean> filterFunction,
+            Comparator<File> sortingComparator) {
+        SortedSet<File> sortedFiles = new TreeSet<>(sortingComparator);
+        for (File path : directories) {
+            if (!path.exists() || !path.isDirectory()) {
+                throw new IllegalArgumentException();
+            }
+            List<File> allFiles = Utils.getAllFilesInDirectory(path, null);
+            for (File file : allFiles) {
+                boolean include = filterFunction.apply(file);
+                if (include) {
+                    sortedFiles.add(file);
+                }
+            }
+        }
+        return sortedFiles;
     }
 
     private int[] getReaderAndLineIndex(int virtualIndex) {
