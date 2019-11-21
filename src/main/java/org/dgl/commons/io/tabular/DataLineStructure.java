@@ -59,4 +59,18 @@ public class DataLineStructure {
     public int getSizeInBytes() {
         return sizeInBytes;
     }
+
+    public boolean equals(DataLineStructure lineStructure) {
+        if (lineStructure.getNumberOfElements() != getNumberOfElements()) {
+            return false;
+        }
+
+        for (int i = 0; i < lineStructure.getNumberOfElements(); i++) {
+            if (lineStructure.getElementType(i) != getElementType(i)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
