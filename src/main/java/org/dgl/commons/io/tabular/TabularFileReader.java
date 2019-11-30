@@ -13,7 +13,7 @@ import static org.dgl.commons.io.Definitions.MAX_BUFFER_SIZE;
 public class TabularFileReader implements TabularReader {
 
     private final int headerLength;
-    private final int numberOfLines;
+    private final long numberOfLines;
     private final int bytesPerLine;
     private final DataLineStructure lineStructure;
     private final FileChannel fileChannel;
@@ -37,7 +37,7 @@ public class TabularFileReader implements TabularReader {
             close();
             throw new IllegalStateException("Invalid file size");
         }
-        numberOfLines = (int) ((fileSize - (long) headerLength) / (long) bytesPerLine);
+        numberOfLines = ((fileSize - (long) headerLength) / (long) bytesPerLine);
         lineBuffer = ByteBuffer.allocateDirect(bytesPerLine).order(endianness);
     }
 
@@ -45,12 +45,12 @@ public class TabularFileReader implements TabularReader {
         this(filePath, DEFAULT_ENDIANNESS);
     }
 
-    public DataLine getLine(int lineIndex) throws IOException {
+    public DataLine getLine(long lineIndex) throws IOException {
         validateGet(lineIndex);
         return getDataLines(readAndFlip(lineBuffer, getLinePosition(lineIndex)))[0];
     }
 
-    public byte[] getLineBytes(int lineIndex) throws IOException {
+    public byte[] getLineBytes(long lineIndex) throws IOException {
         validateGet(lineIndex);
         byte[] lineBytes = new byte[bytesPerLine];
         readAndFlip(lineBuffer, getLinePosition(lineIndex)).get(lineBytes);
@@ -65,9 +65,9 @@ public class TabularFileReader implements TabularReader {
      * @return
      * @throws IOException
      */
-    public DataLine[] getLines(int firstIndex, int lastIndex) throws IOException {
+    public DataLine[] getLines(long firstIndex, long lastIndex) throws IOException {
         validateGet(firstIndex, lastIndex);
-        long bytesToRead = (long) (lastIndex - firstIndex) * (long) bytesPerLine;
+        long bytesToRead = (lastIndex - firstIndex) * (long) bytesPerLine;
         if (bytesToRead > MAX_BUFFER_SIZE) {
             DataLine[] firstHalf = getLines(firstIndex, firstIndex + ((lastIndex - firstIndex) / 2));
             DataLine[] secondHalf = getLines(firstIndex + ((lastIndex - firstIndex) / 2), lastIndex);
@@ -87,9 +87,9 @@ public class TabularFileReader implements TabularReader {
      * @return
      * @throws IOException
      */
-    public byte[] getLinesBytes(int firstIndex, int lastIndex) throws IOException {
+    public byte[] getLinesBytes(long firstIndex, long lastIndex) throws IOException {
         validateGet(firstIndex, lastIndex);
-        long bytesToRead = (long) (lastIndex - firstIndex) * (long) bytesPerLine;
+        long bytesToRead = (lastIndex - firstIndex) * (long) bytesPerLine;
         if (bytesToRead > MAX_BUFFER_SIZE) {
             byte[] firstHalf = getLinesBytes(firstIndex, firstIndex + ((lastIndex - firstIndex) / 2));
             byte[] secondHalf = getLinesBytes(firstIndex + ((lastIndex - firstIndex) / 2), lastIndex);
@@ -98,13 +98,13 @@ public class TabularFileReader implements TabularReader {
         if (multipleLinesBuffer == null || multipleLinesBuffer.capacity() < bytesToRead) {
             multipleLinesBuffer = ByteBuffer.allocateDirect((int) bytesToRead);
         }
-        byte[] linesBytes = new byte[(int) bytesToRead]; //At this point bytesToRead < Integer.MAX_VALUE always
+        byte[] linesBytes = new byte[(int) bytesToRead];
 
         readAndFlip(multipleLinesBuffer, (int) bytesToRead, getLinePosition(firstIndex)).get(linesBytes);
         return linesBytes;
     }
 
-    public int getNumberOfLines() {
+    public long getNumberOfLines() {
         return numberOfLines;
     }
 
@@ -169,7 +169,7 @@ public class TabularFileReader implements TabularReader {
         return dataLines;
     }
 
-    private void validateGet(int lineIndex) throws IOException {
+    private void validateGet(long lineIndex) throws IOException {
         if (lineIndex < 0 || lineIndex >= numberOfLines) {
             throw new IndexOutOfBoundsException();
         }
@@ -178,7 +178,7 @@ public class TabularFileReader implements TabularReader {
         }
     }
 
-    private void validateGet(int firstIndex, int lastIndex) throws IOException {
+    private void validateGet(long firstIndex, long lastIndex) throws IOException {
         if (lastIndex <= firstIndex) {
             throw new IllegalArgumentException();
         }
@@ -190,8 +190,8 @@ public class TabularFileReader implements TabularReader {
         }
     }
 
-    private long getLinePosition(int lineIndex) {
-        return ((long) lineIndex * (long) bytesPerLine) + (long) headerLength;
+    private long getLinePosition(long lineIndex) {
+        return (lineIndex * (long) bytesPerLine) + (long) headerLength;
     }
 
     private DataLineStructure getLineStructureFromFile() throws IOException {

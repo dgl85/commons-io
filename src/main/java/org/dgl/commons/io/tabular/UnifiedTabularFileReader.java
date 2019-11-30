@@ -11,8 +11,8 @@ import java.util.function.Function;
 public class UnifiedTabularFileReader implements TabularReader {
 
     private final TabularFileReader[] sortedDataFileReaders;
-    private final int numberOfLines;
-    private final int[] fileBaseIndexes;
+    private final long numberOfLines;
+    private final long[] fileBaseIndexes;
 
     /**
      * Files are sorted based on their full path
@@ -73,8 +73,8 @@ public class UnifiedTabularFileReader implements TabularReader {
             Comparator<File> sortingComparator) throws IOException {
         SortedSet<File> sortedFiles = getSortedFiles(directories, filterFunction, sortingComparator);
         sortedDataFileReaders = new TabularFileReader[sortedFiles.size()];
-        fileBaseIndexes = new int[sortedFiles.size()];
-        int lineCounter = 0;
+        fileBaseIndexes = new long[sortedFiles.size()];
+        long lineCounter = 0;
         int indexCounter = 0;
         Iterator<File> filesIterator = sortedFiles.iterator();
         while (filesIterator.hasNext()) {
@@ -86,17 +86,17 @@ public class UnifiedTabularFileReader implements TabularReader {
         numberOfLines = lineCounter;
     }
 
-    public DataLine getLine(int lineIndex) throws IOException {
-        int[] indexes = getReaderAndLineIndex(lineIndex);
-        return sortedDataFileReaders[indexes[0]].getLine(indexes[1]);
+    public DataLine getLine(long lineIndex) throws IOException {
+        long[] indexes = getReaderAndLineIndex(lineIndex);
+        return sortedDataFileReaders[(int) indexes[0]].getLine(indexes[1]);
     }
 
-    public byte[] getLineBytes(int lineIndex) throws IOException {
-        int[] indexes = getReaderAndLineIndex(lineIndex);
-        return sortedDataFileReaders[indexes[0]].getLineBytes(indexes[1]);
+    public byte[] getLineBytes(long lineIndex) throws IOException {
+        long[] indexes = getReaderAndLineIndex(lineIndex);
+        return sortedDataFileReaders[(int) indexes[0]].getLineBytes(indexes[1]);
     }
 
-    public int getNumberOfLines() {
+    public long getNumberOfLines() {
         return numberOfLines;
     }
 
@@ -130,7 +130,7 @@ public class UnifiedTabularFileReader implements TabularReader {
         return sortedFiles;
     }
 
-    private int[] getReaderAndLineIndex(int virtualIndex) {
+    private long[] getReaderAndLineIndex(long virtualIndex) {
         int fileIndex = 0;
         while (fileBaseIndexes[fileIndex] <= virtualIndex) {
             fileIndex++;
@@ -139,6 +139,6 @@ public class UnifiedTabularFileReader implements TabularReader {
         if (fileIndex > 0) {
             lineIndex -= fileBaseIndexes[fileIndex - 1];
         }
-        return new int[]{fileIndex, (int) lineIndex};
+        return new long[]{fileIndex, lineIndex};
     }
 }

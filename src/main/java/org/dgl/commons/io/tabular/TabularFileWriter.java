@@ -20,7 +20,7 @@ public class TabularFileWriter {
     private final RandomAccessFile randomAccessFile;
     private final String filePath;
     private ByteBuffer multipleLinesBuffer = null;
-    private int currentLineIndex;
+    private long currentLineIndex;
 
     public TabularFileWriter(String filePath, DataLineStructure lineStructure, ByteOrder endianness)
             throws IOException {
@@ -47,7 +47,7 @@ public class TabularFileWriter {
             writeFileHeader();
         }
         lineBuffer = ByteBuffer.allocateDirect(lineStructure.getSizeInBytes()).order(endianness);
-        currentLineIndex = (int) ((fileChannel.size() - (long) headerLength) / (long) bytesPerLine);
+        currentLineIndex = ((fileChannel.size() - (long) headerLength) / (long) bytesPerLine);
     }
 
     public TabularFileWriter(String filePath, DataLineStructure lineStructure) throws IOException {
@@ -58,7 +58,7 @@ public class TabularFileWriter {
         writeLines(currentLineIndex, new DataLine[]{dataLine});
     }
 
-    public void writeLine(int lineIndex, DataLine dataLine) throws IOException {
+    public void writeLine(long lineIndex, DataLine dataLine) throws IOException {
         writeLines(lineIndex, new DataLine[]{dataLine});
     }
 
@@ -66,7 +66,7 @@ public class TabularFileWriter {
         writeLines(currentLineIndex, dataLines);
     }
 
-    public void writeLines(int startLineIndex, DataLine[] dataLines) throws IOException {
+    public void writeLines(long startLineIndex, DataLine[] dataLines) throws IOException {
         if (startLineIndex < 0 || startLineIndex > currentLineIndex) {
             throw new IndexOutOfBoundsException();
         }
@@ -112,8 +112,8 @@ public class TabularFileWriter {
         return filePath;
     }
 
-    private long getLinePosition(int lineIndex) {
-        return ((long) lineIndex * (long) bytesPerLine) + (long) headerLength;
+    private long getLinePosition(long lineIndex) {
+        return (lineIndex * (long) bytesPerLine) + (long) headerLength;
     }
 
     private ByteBuffer writeDataLinesToBuffer(DataLine[] dataLines, ByteBuffer writeBuffer) {

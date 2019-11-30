@@ -2,9 +2,9 @@ package org.dgl.commons.io.tabular;
 
 public interface TabularReader {
 
-    DataLine getLine(int lineIndex) throws Exception;
+    DataLine getLine(long lineIndex) throws Exception;
 
-    int getNumberOfLines();
+    long getNumberOfLines();
 
     void close() throws Exception;
 
