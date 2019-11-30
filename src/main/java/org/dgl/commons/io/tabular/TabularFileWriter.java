@@ -119,7 +119,7 @@ public class TabularFileWriter {
     private ByteBuffer writeDataLinesToBuffer(DataLine[] dataLines, ByteBuffer writeBuffer) {
         writeBuffer.clear();
         for (int i = 0; i < dataLines.length; i++) {
-            if (!Utils.compareDataLineStructures(dataLines[i].getLineStructure(), lineStructure)) {
+            if (!dataLines[i].getLineStructure().equals(lineStructure)) {
                 throw new InvalidDataLineStructureException();
             }
             appendDataLineToBuffer(dataLines[i], writeBuffer);
@@ -162,7 +162,7 @@ public class TabularFileWriter {
         TabularFileReader reader = new TabularFileReader(filePath);
         DataLineStructure fileLineStructure = reader.getLineStructure();
         reader.close();
-        if (!Utils.compareDataLineStructures(lineStructure, fileLineStructure)) {
+        if (!lineStructure.equals(fileLineStructure)) {
             throw new InvalidDataLineStructureException();
         }
     }
