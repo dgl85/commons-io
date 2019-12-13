@@ -1,12 +1,15 @@
 package org.dgl.commons.io.tabular;
 
-public interface TabularReader {
+import java.io.Closeable;
+import java.io.IOException;
+
+public interface TabularReader extends Closeable {
 
     DataLine getLine(long lineIndex) throws Exception;
 
     long getNumberOfLines();
 
-    void close() throws Exception;
+    void close() throws IOException;
 
     void closeQuietly();
 }

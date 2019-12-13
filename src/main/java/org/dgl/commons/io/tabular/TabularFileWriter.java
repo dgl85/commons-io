@@ -1,5 +1,6 @@
 package org.dgl.commons.io.tabular;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -10,7 +11,7 @@ import java.nio.channels.FileChannel;
 import static org.dgl.commons.io.Definitions.DEFAULT_ENDIANNESS;
 import static org.dgl.commons.io.Definitions.MAX_BUFFER_SIZE;
 
-public class TabularFileWriter {
+public class TabularFileWriter implements Closeable {
 
     private final int bytesPerLine;
     private final int headerLength;
