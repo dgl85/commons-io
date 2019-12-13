@@ -186,6 +186,20 @@ public class DataLine {
         }
     }
 
+    public boolean equals(DataLine line) {
+        if (!getLineStructure().equals(line.getLineStructure())) {
+            return false;
+        }
+        byte[] bytes1 = Utils.getDataLineBytes(this);
+        byte[] bytes2 = Utils.getDataLineBytes(line);
+        for (int i = 0; i < bytes1.length; i++) {
+            if (bytes1[i] != bytes2[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Override
     public String toString() {
         String returnString = "";
