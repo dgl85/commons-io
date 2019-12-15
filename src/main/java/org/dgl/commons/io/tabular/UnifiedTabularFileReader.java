@@ -10,9 +10,9 @@ import java.util.function.Function;
  */
 public class UnifiedTabularFileReader implements TabularReader {
 
-    private final TabularFileReader[] sortedDataFileReaders;
-    private final long numberOfLines;
-    private final long[] fileBaseIndexes;
+    private TabularFileReader[] sortedDataFileReaders;
+    private long numberOfLines;
+    private long[] fileBaseIndexes;
 
     /**
      * Files are sorted based on their full path
@@ -71,19 +71,12 @@ public class UnifiedTabularFileReader implements TabularReader {
      */
     public UnifiedTabularFileReader(File[] directories, Function<File, Boolean> filterFunction,
             Comparator<File> sortingComparator) throws IOException {
-        SortedSet<File> sortedFiles = getSortedFiles(directories, filterFunction, sortingComparator);
-        sortedDataFileReaders = new TabularFileReader[sortedFiles.size()];
-        fileBaseIndexes = new long[sortedFiles.size()];
-        long lineCounter = 0;
-        int indexCounter = 0;
-        Iterator<File> filesIterator = sortedFiles.iterator();
-        while (filesIterator.hasNext()) {
-            sortedDataFileReaders[indexCounter] = new TabularFileReader(filesIterator.next().getAbsolutePath());
-            lineCounter += sortedDataFileReaders[indexCounter].getNumberOfLines();
-            fileBaseIndexes[indexCounter] = lineCounter;
-            indexCounter++;
-        }
-        numberOfLines = lineCounter;
+        initialize(convertToArray(getSortedFiles(directories, filterFunction, sortingComparator)));
+    }
+
+
+    public UnifiedTabularFileReader(File[] files) throws IOException {
+        initialize(files);
     }
 
     public DataLine getLine(long lineIndex) throws IOException {
@@ -110,6 +103,18 @@ public class UnifiedTabularFileReader implements TabularReader {
         for (TabularFileReader reader : sortedDataFileReaders) {
             reader.closeQuietly();
         }
+    }
+
+    private void initialize(File[] files) throws IOException {
+        sortedDataFileReaders = new TabularFileReader[files.length];
+        fileBaseIndexes = new long[files.length];
+        long lineCounter = 0;
+        for (int i = 0; i < files.length; i++) {
+            sortedDataFileReaders[i] = new TabularFileReader(files[i].getAbsolutePath());
+            lineCounter += sortedDataFileReaders[i].getNumberOfLines();
+            fileBaseIndexes[i] = lineCounter;
+        }
+        numberOfLines = lineCounter;
     }
 
     private SortedSet<File> getSortedFiles(File[] directories, Function<File, Boolean> filterFunction,
@@ -140,5 +145,15 @@ public class UnifiedTabularFileReader implements TabularReader {
             lineIndex -= fileBaseIndexes[fileIndex - 1];
         }
         return new long[]{fileIndex, lineIndex};
+    }
+
+    private File[] convertToArray(SortedSet<File> sortedFiles) {
+        File[] filesArray = new File[sortedFiles.size()];
+        Iterator<File> filesIterator = sortedFiles.iterator();
+        int counter = 0;
+        while (filesIterator.hasNext()) {
+            filesArray[counter] = filesIterator.next();
+        }
+        return filesArray;
     }
 }
