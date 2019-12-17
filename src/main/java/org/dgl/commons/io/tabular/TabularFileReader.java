@@ -69,8 +69,9 @@ public class TabularFileReader implements TabularReader {
         validateGet(firstIndex, lastIndex);
         long bytesToRead = (lastIndex - firstIndex) * (long) bytesPerLine;
         if (bytesToRead > MAX_BUFFER_SIZE) {
-            DataLine[] firstHalf = getLines(firstIndex, firstIndex + ((lastIndex - firstIndex) / 2));
-            DataLine[] secondHalf = getLines(firstIndex + ((lastIndex - firstIndex) / 2), lastIndex);
+            long splitIndex = firstIndex + ((lastIndex - firstIndex) / 2);
+            DataLine[] firstHalf = getLines(firstIndex, splitIndex);
+            DataLine[] secondHalf = getLines(splitIndex, lastIndex);
             return Utils.mergeArrays(firstHalf, secondHalf);
         }
         if (multipleLinesBuffer == null || multipleLinesBuffer.capacity() < bytesToRead) {
@@ -91,8 +92,9 @@ public class TabularFileReader implements TabularReader {
         validateGet(firstIndex, lastIndex);
         long bytesToRead = (lastIndex - firstIndex) * (long) bytesPerLine;
         if (bytesToRead > MAX_BUFFER_SIZE) {
-            byte[] firstHalf = getLinesBytes(firstIndex, firstIndex + ((lastIndex - firstIndex) / 2));
-            byte[] secondHalf = getLinesBytes(firstIndex + ((lastIndex - firstIndex) / 2), lastIndex);
+            long splitIndex = firstIndex + ((lastIndex - firstIndex) / 2);
+            byte[] firstHalf = getLinesBytes(firstIndex, splitIndex);
+            byte[] secondHalf = getLinesBytes(splitIndex, lastIndex);
             return Utils.mergeArrays(firstHalf, secondHalf);
         }
         if (multipleLinesBuffer == null || multipleLinesBuffer.capacity() < bytesToRead) {

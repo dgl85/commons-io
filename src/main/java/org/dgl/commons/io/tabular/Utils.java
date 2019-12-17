@@ -1,5 +1,6 @@
 package org.dgl.commons.io.tabular;
 
+import javafx.util.Pair;
 import org.dgl.commons.io.PrimitiveBytes;
 
 import java.io.File;
@@ -81,8 +82,8 @@ public class Utils {
         return bytes;
     }
 
-    public static <T> T[] mergeArrays(T[] firstHalf, T[] secondHalf) {
-        T[] complete = (T[]) new Object[firstHalf.length + secondHalf.length];
+    public static DataLine[] mergeArrays(DataLine[] firstHalf, DataLine[] secondHalf) {
+        DataLine[] complete = new DataLine[firstHalf.length + secondHalf.length];
         for (int i = 0; i < firstHalf.length; i++) {
             complete[i] = firstHalf[i];
         }
@@ -103,23 +104,16 @@ public class Utils {
         return complete;
     }
 
-    /**
-     * @param data
-     * @return [firstHalf, secondHalf]
-     */
-    public static <T> T[][] splitArrayInHalfs(T[] data) {
-        T[][] halfs = (T[][]) new Object[2][];
-        T[] firstHalf = (T[]) new Object[data.length / 2];
-        T[] secondHalf = (T[]) new Object[data.length - firstHalf.length];
+    public static Pair<DataLine[], DataLine[]> splitArrayInHalf(DataLine[] data) {
+        DataLine[] firstHalf = new DataLine[data.length / 2];
+        DataLine[] secondHalf = new DataLine[data.length - firstHalf.length];
         for (int i = 0; i < firstHalf.length; i++) {
             firstHalf[i] = data[i];
         }
         for (int i = 0; i < secondHalf.length; i++) {
             secondHalf[i] = data[firstHalf.length + i];
         }
-        halfs[0] = firstHalf;
-        halfs[1] = secondHalf;
-        return halfs;
+        return new Pair<>(firstHalf, secondHalf);
     }
 
     public static List<File> getAllFilesInDirectory(File directory, String extension) {

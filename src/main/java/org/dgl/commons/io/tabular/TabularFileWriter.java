@@ -1,5 +1,7 @@
 package org.dgl.commons.io.tabular;
 
+import javafx.util.Pair;
+
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -75,9 +77,9 @@ public class TabularFileWriter implements Closeable {
         if (dataLines.length > 1) {
             long bytesToWrite = (long) dataLines.length * (long) bytesPerLine;
             if (bytesToWrite > MAX_BUFFER_SIZE) {
-                DataLine[][] halfs = Utils.splitArrayInHalfs(dataLines);
-                writeLines(startLineIndex, halfs[0]);
-                writeLines(startLineIndex + halfs[0].length, halfs[1]);
+                Pair<DataLine[], DataLine[]> halfs = Utils.splitArrayInHalf(dataLines);
+                writeLines(startLineIndex, halfs.getKey());
+                writeLines(startLineIndex + halfs.getKey().length, halfs.getValue());
                 return;
             }
             if (multipleLinesBuffer == null || multipleLinesBuffer.capacity() < bytesToWrite) {
