@@ -153,6 +153,7 @@ public class UnifiedTabularFileReader implements TabularReader {
         int counter = 0;
         while (filesIterator.hasNext()) {
             filesArray[counter] = filesIterator.next();
+            counter++;
         }
         return filesArray;
     }
